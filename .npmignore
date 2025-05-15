@@ -1,0 +1,23 @@
+# Source files
+src/
+
+# Config files
+.eslintignore
+.eslintrc.js
+.prettierrc.js
+.prettierignore
+
+# Tests
+__tests__/
+
+# Storybook
+.storybook/
+stories/
+
+# Other
+.DS_Store
+*.log
+
+# Git
+.git/
+.gitignore 

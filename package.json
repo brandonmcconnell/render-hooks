@@ -2,9 +2,29 @@
   "name": "render-hooks",
   "version": "0.0.1",
   "description": "Inline render-block-stable React hooks",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "default": "./dist/index.mjs"
+    }
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsdown src/index.tsx --out-dir dist --dts --format cjs,esm",
+    "dev": "tsdown src/index.tsx --out-dir dist --dts --watch --format cjs,esm",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "repository": {
     "type": "git",
@@ -24,6 +44,8 @@
   "homepage": "https://github.com/brandonmcconnell/render-hooks#readme",
   "devDependencies": {
     "@types/node": "^22.15.18",
+    "@types/react": "^19.1.4",
+    "@types/react-dom": "^19.1.5",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^8.32.1",
     "eslint": "^9.26.0",

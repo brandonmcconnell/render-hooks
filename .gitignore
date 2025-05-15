@@ -1,11 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
 # Logs
-logs
-*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
 lerna-debug.log*
+
+# Misc
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -39,7 +50,6 @@ bower_components
 build/Release
 
 # Dependency directories
-node_modules/
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
@@ -69,12 +79,6 @@ web_modules/
 # Yarn Integrity file
 .yarnclean
 
-# dotenv environment variables file
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-
 # parcel-bundler cache files
 .cache
 .parcel-cache
@@ -85,7 +89,6 @@ out
 
 # Nuxt.js build output
 .nuxt
-dist
 
 # Gatsby files
 .cache/
