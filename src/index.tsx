@@ -54,17 +54,15 @@ type CoreHelpers = typeof coreHelpers;
  * 4 ▸ default component                                       *
  * ----------------------------------------------------------- */
 export default function RenderHooks<
-  Extra extends Record<string, Fn> = {},
->({
-  hooks,
-  children,
-}: {
-  hooks?: Extra;
-  children: (helpers: CoreHelpers & Extra) => React.ReactNode;
+  TValue extends Record<string, Fn> = {},
+>(props: {
+  hooks?: TValue;
+  children: (helpers: CoreHelpers & (TValue extends Record<string, Fn> ? TValue : {})) => React.ReactNode;
 }): React.ReactElement {
+  const { hooks, children } = props;
   const helpers = React.useMemo(
-    () => ({ ...coreHelpers, ...(hooks ?? {}) }) as CoreHelpers & Extra,
+    () => ({ ...coreHelpers, ...(hooks ?? {}) }),
     [hooks],
-  );
+  ) as CoreHelpers & (TValue extends Record<string, Fn> ? TValue : {});
   return <>{children(helpers)}</>;
 }

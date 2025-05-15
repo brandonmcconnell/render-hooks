@@ -37,6 +37,10 @@ coverage
 # nyc test coverage
 .nyc_output
 
+# Vitest cache and coverage
+.vitest_cache/
+coverage/
+
 # Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 

@@ -9,6 +9,11 @@ src/
 
 # Tests
 __tests__/
+src/**/*.test.ts
+src/**/*.test.tsx
+vitest.config.ts
+vitest.setup.ts
+coverage/
 
 # Storybook
 .storybook/

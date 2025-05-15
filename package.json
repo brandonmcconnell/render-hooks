@@ -13,10 +13,10 @@
     }
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
     "build": "tsdown src/index.tsx --out-dir dist --dts --format cjs,esm",
     "dev": "tsdown src/index.tsx --out-dir dist --dts --watch --format cjs,esm",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run test && npm run build"
   },
   "files": [
     "dist",
@@ -43,6 +43,8 @@
   },
   "homepage": "https://github.com/brandonmcconnell/render-hooks#readme",
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.8",
+    "@testing-library/react": "^16.0.0",
     "@types/node": "^22.15.18",
     "@types/react": "^19.1.4",
     "@types/react-dom": "^19.1.5",
@@ -55,7 +57,10 @@
     "patch-package": "^8.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "happy-dom": "^14.12.3",
     "tsdown": "^0.11.9",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^2.0.4",
+    "@vitejs/plugin-react": "^4.3.1"
   }
 }
