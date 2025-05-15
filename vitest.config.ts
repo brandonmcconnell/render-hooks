@@ -6,7 +6,6 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom', // or 'jsdom'
-    setupFiles: './vitest.setup.ts', // Optional: if you need setup files
     include: ['src/**/*.test.{ts,tsx}'],
     testTimeout: 30000, // Increased timeout to 30 seconds
     coverage: {
