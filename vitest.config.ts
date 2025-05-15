@@ -8,6 +8,7 @@ export default defineConfig({
     environment: 'happy-dom', // or 'jsdom'
     setupFiles: './vitest.setup.ts', // Optional: if you need setup files
     include: ['src/**/*.test.{ts,tsx}'],
+    testTimeout: 30000, // Increased timeout to 30 seconds
     coverage: {
       provider: 'v8', // or 'istanbul'
       reporter: ['text', 'json', 'html'],

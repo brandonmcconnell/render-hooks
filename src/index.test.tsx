@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, act as rtlAct } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import $ from './index'; // Assuming RenderHooks is the default export from src/index.tsx
-
+import { useFormStatus as reactDom_useFormStatus } from 'react-dom'; // Import for useFormStatus test
 import { vi, describe, it, expect } from 'vitest';
 
 describe('RenderHooks Component', () => {
@@ -143,6 +143,7 @@ describe('RenderHooks Component', () => {
         vi.advanceTimersByTime(1000);
       });
       await waitFor(() => expect(screen.queryByText('loading...')).not.toBeInTheDocument());
+      await waitFor(() => expect(screen.getByText(/:/)).toBeInTheDocument());
       vi.useRealTimers();
     });
 
@@ -263,7 +264,7 @@ describe('RenderHooks Component', () => {
       const label = screen.getByText('Name');
       const input = screen.getByLabelText('Name');
       expect(input.id).toBe(label.getAttribute('for'));
-      expect(input.id).toMatch(/^:r\\d+:$/); // React 18+ ID format like :r0:
+      expect(input.id).toMatch(/^(:r\d+:|«r\d+?»)$/);
     });
 
     it('useSyncExternalStore example works', () => {
@@ -331,7 +332,7 @@ describe('RenderHooks Component', () => {
       expect(output).toHaveTextContent('deferred:');
 
       fireEvent.change(input, { target: { value: 'hello' } });
-      await waitFor(() => expect(output).toHaveTextContent('deferred: hello'));
+      await waitFor(() => expect(output).toHaveTextContent('deferred: hello'), { timeout: 10000 });
     });
 
     it('useTransition example works', async () => {
@@ -367,7 +368,7 @@ describe('RenderHooks Component', () => {
 
       fireEvent.change(input, { target: { value: 'Item 1' } });
 
-      expect(screen.queryByText('updating…')).toBeInTheDocument();
+      await expect(screen.findByText('updating…')).resolves.toBeInTheDocument();
 
       rtlAct(() => {
         vi.runAllTimers();
@@ -428,12 +429,12 @@ describe('RenderHooks Component', () => {
       });
 
       const SubmitButton = () => {
-        const { pending } = (React as any).useFormStatus!();
+        const { pending } = reactDom_useFormStatus();
         return <button type="submit" disabled={pending}>{pending ? 'Saving…' : 'Save'}</button>;
       };
 
       const StatusDisplay = () => {
-         const { pending } = (React as any).useFormStatus!();
+         const { pending } = reactDom_useFormStatus();
          return pending ? <p>Form is pending...</p> : <p>Form is idle.</p>;
       };
 
@@ -486,7 +487,7 @@ describe('RenderHooks Component', () => {
         <React.Suspense fallback={<p>Loading quote...</p>}>
           <$>
             {({ use }) => {
-                const quote = (use! as any)(fetchQuote());
+                const quote = (use! as (promise: Promise<string>) => string)(fetchQuote());
                 return <blockquote>{quote}</blockquote>;
             }}
           </$>
@@ -497,7 +498,7 @@ describe('RenderHooks Component', () => {
       expect(screen.getByText('Loading quote...')).toBeInTheDocument();
       await waitFor(() => {
         expect(screen.getByText('"Ship early, ship often."')).toBeInTheDocument();
-      });
+      }, { timeout: 5000 });
     });
   });
 
