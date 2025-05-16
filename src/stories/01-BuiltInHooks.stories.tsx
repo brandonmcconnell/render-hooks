@@ -371,6 +371,7 @@ function UseAwaitExample() {
 
 const meta: Meta = {
   title: 'Examples/Built-in Hooks',
+  tags: ['autodocs'],
   parameters: {
     layout: 'top',
   },
