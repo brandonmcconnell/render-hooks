@@ -29,6 +29,7 @@ Render Hooks lets you place hooks right next to the markup that needs them—no 
     - [`useFormStatus` (React-DOM ≥ 19)](#useformstatusreact-dom--19)
     - [`use` (awaitable hook, React ≥ 19)](#useawaitable-hook-react--19)
   - [🛠 Custom hooks](#-custom-hooks)
+  - [🧱 Nesting `RenderHooks`](#-nesting-renderhooks)
   - [🤝 Collaboration](#-collaboration)
   - [📝 License](#-license)
 
@@ -50,7 +51,7 @@ Render Hooks lets you place hooks right next to the markup that needs them—no 
 
 | ✔︎ | Description |
 |----|-------------|
-| **One element** | `<$>` merges every `use*` hook exposed by the consumer’s version of **`react` + `react-dom`** into a single helpers object. |
+| **One element** | `<$>` merges every `use*` hook exposed by the consumer's version of **`react` + `react-dom`** into a single helpers object. |
 | **Version-adaptive** | Only the hooks that exist in *your* React build appear. Upgrade React → new hooks show up automatically. |
 | **Custom-hook friendly** | Pass an object of your own hooks once—full IntelliSense inside the render callback. |
 | **100 % type-safe** | No `any`, no `unknown`. Generic signatures flow through the helpers object. |
@@ -103,7 +104,7 @@ The hook runs during the same render, so the Rules of Hooks are upheld.
 
 Below is a **minimal, practical snippet for every built-in hook**.  
 Each header lists the **minimum React (or React-DOM) version** required—if your
-project uses an older version, that hook simply won’t appear in the helpers
+project uses an older version, that hook simply won't appear in the helpers
 object.
 
 > All snippets assume  
@@ -505,7 +506,7 @@ export function UseFormStatusExample() {
 ```tsx
 function fetchQuote() {
   return new Promise<string>((r) =>
-    setTimeout(() => r('“Ship early, ship often.”'), 800),
+    setTimeout(() => r('"Ship early, ship often."'), 800),
   );
 }
 
@@ -545,6 +546,99 @@ export function Example() {
   );
 }
 ```
+
+---
+
+## 🧱 Nesting `RenderHooks`
+
+You can nest `RenderHooks` (`$`) as deeply as you need. Each instance provides its own fresh set of hooks, scoped to its render callback. This is particularly useful for managing item-specific state within loops, where you'd otherwise need to create separate components.
+
+Here's an example where RenderHooks is used to manage state for both levels of a nested list directly within the `.map()` callbacks, and a child can affect a parent RenderHook's state:
+
+```tsx
+import React from 'react'; // Needed for useState, useCallback in this example
+import $ from 'render-hooks';
+
+type Category = {
+  id: number;
+  name: string;
+  posts: { id: number; title: string }[];
+};
+
+const data: Category[] = [
+  {
+    id: 1,
+    name: 'Tech',
+    posts: [{ id: 11, title: 'Next-gen CSS' }],
+  },
+  {
+    id: 2,
+    name: 'Life',
+    posts: [
+      { id: 21, title: 'Minimalism' },
+      { id: 22, title: 'Travel hacks' },
+    ],
+  },
+];
+
+export default function NestedImpactfulExample() {
+  return (
+    <ul>
+      {data.map((cat) => (
+        /* ───── 1️⃣  Outer RenderHooks for each category row ───── */
+        <$ key={cat.id}>
+          {({ useState }) => {
+            const [expanded, setExpanded] = useState(false);
+            const [likes, setLikes] = useState(0); // 💡 aggregate likes
+
+            return (
+              <li>
+                <button onClick={() => setExpanded(!expanded)}>
+                  {expanded ? '▾' : '▸'} {cat.name} (
+                  {likes} like{likes === 1 ? '' : 's'})
+                </button>
+
+                {expanded && (
+                  <ul>
+                    {cat.posts.map((post) => (
+                      /* ───── 2️⃣  Inner RenderHooks per post row ───── */
+                      <$ key={post.id}>
+                        {({ useState }) => {
+                          const [liked, setLiked] = useState(false);
+
+                          const toggleLike = () => {
+                            setLiked((prev) => {
+                              const next = !prev;
+                              // 🔄 update outer «likes» when this post toggles
+                              setLikes((c) => c + (next ? 1 : -1));
+                              return next;
+                            });
+                          };
+
+                          return (
+                            <li>
+                              {post.title}{' '}
+                              <button onClick={toggleLike}>
+                                {liked ? '♥︎ Liked' : '♡ Like'}
+                              </button>
+                            </li>
+                          );
+                        }}
+                      </$>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            );
+          }}
+        </$>
+      ))}
+    </ul>
+  );
+}
+```
+
+This demonstrates not only nesting for independent state but also how functions created within a parent `RenderHooks` instance can be passed to and called by children that also use `RenderHooks`, facilitating cross-component communication within these dynamic scopes.
 
 ---
 
