@@ -7,9 +7,10 @@ body {
   font-style: normal;
 }
 
-.sidebar-header a[title] img {
-  height: 47px;
-  width: auto;
+.sidebar-header a[title] img[class] {
+  width: 220px !important;
+  max-width: 220px !important;
+  height: auto !important;
 }
 
 [data-story-block] > [data-name] {
