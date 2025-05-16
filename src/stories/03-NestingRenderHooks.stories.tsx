@@ -34,7 +34,7 @@ const data: Category[] = [
   },
 ];
 
-function NestedExample() {
+export function NestedExample() {
   return (
     <ul style={{ listStyle: 'none', paddingLeft: '0'}}>
       {data.map((cat) => (
