@@ -556,7 +556,7 @@ You can nest `RenderHooks` (`$`) as deeply as you need. Each instance provides i
 Here's an example where RenderHooks is used to manage state for both levels of a nested list directly within the `.map()` callbacks, and a child can affect a parent RenderHook's state:
 
 ```tsx
-import React from 'react'; // Needed for useState, useCallback in this example
+import React from 'react'; // Needed for useState, useTransition in this example
 import $ from 'render-hooks';
 
 type Category = {
@@ -581,21 +581,22 @@ const data: Category[] = [
   },
 ];
 
-export default function NestedImpactfulExample() {
+export function NestedExample() {
   return (
     <ul>
       {data.map((cat) => (
         /* ───── 1️⃣  Outer RenderHooks for each category row ───── */
         <$ key={cat.id}>
-          {({ useState }) => {
+          {({ useState, useTransition }) => {
             const [expanded, setExpanded] = useState(false);
-            const [likes, setLikes] = useState(0); // 💡 aggregate likes
+            const [likes, setLikes] = useState(0); 
+            const [isPending, startTransition] = useTransition();
 
             return (
               <li>
                 <button onClick={() => setExpanded(!expanded)}>
-                  {expanded ? '▾' : '▸'} {cat.name} (
-                  {likes} like{likes === 1 ? '' : 's'})
+                  {expanded ? '▾' : '▸'} {cat.name} ({likes} like{likes === 1 ? '' : 's'})
+                  {isPending && ' (updating...)'}
                 </button>
 
                 {expanded && (
@@ -603,14 +604,16 @@ export default function NestedImpactfulExample() {
                     {cat.posts.map((post) => (
                       /* ───── 2️⃣  Inner RenderHooks per post row ───── */
                       <$ key={post.id}>
-                        {({ useState }) => {
-                          const [liked, setLiked] = useState(false);
+                        {({ useState: useItemState }) => {
+                          const [liked, setItemLiked] = useItemState(false);
 
                           const toggleLike = () => {
-                            setLiked((prev) => {
+                            setItemLiked((prev) => {
+                              // 🔄 Update outer «likes» using startTransition from the parent RenderHooks
                               const next = !prev;
-                              // 🔄 update outer «likes» when this post toggles
-                              setLikes((c) => c + (next ? 1 : -1));
+                              startTransition(() => {
+                                setLikes((c) => c + (next ? 1 : -1));
+                              });
                               return next;
                             });
                           };
@@ -638,7 +641,16 @@ export default function NestedImpactfulExample() {
 }
 ```
 
-This demonstrates not only nesting for independent state but also how functions created within a parent `RenderHooks` instance can be passed to and called by children that also use `RenderHooks`, facilitating cross-component communication within these dynamic scopes.
+In this example:
+- The main `NestedExample` component does not use RenderHooks directly.
+- The **first `.map()`** iterates through `data`. Inside this map, `<$>` is used to give each `category` its own states: `expanded` and `likes`. It also gets `useTransition` to acquire `startTransition`.
+- The **second, inner `.map()`** iterates through `cat.posts`. Inside *this* map, another, nested `<$>` is used to give each `post` its own independent `liked` state.
+- Crucially, when a post's `toggleLike` function is called, it updates its local `liked` state and then calls `startTransition` (obtained from the parent category's RenderHooks scope) to wrap the update to the parent's `likes` state. 
+
+This demonstrates not only nesting for independent state but also how functions and transition control from a parent RenderHooks instance can be utilized by children that also use RenderHooks, facilitating robust cross-scope communication.
+
+> [!IMPORTANT]
+> **Note on `startTransition`**: Using `startTransition` here is important. When an interaction (like clicking "Like") in a nested `RenderHooks` instance needs to update state managed by a parent `RenderHooks` instance, React might issue a warning about "updating one component while rendering another" if the update is synchronous. Wrapping the parent's state update in `startTransition` signals to React that this update can be deferred, preventing the warning and ensuring smoother UI updates. This is a general React pattern applicable when updates across component boundaries (or deeply nested state updates) might occur.
 
 ---
 
