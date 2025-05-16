@@ -57,12 +57,12 @@ export default function RenderHooks<
   TValue extends Record<string, Fn> = {},
 >(props: {
   hooks?: TValue;
-  children: (helpers: CoreHelpers & (TValue extends Record<string, Fn> ? TValue : {})) => React.ReactNode;
+  children: (helpers: CoreHelpers & TValue) => React.ReactNode;
 }): React.ReactElement {
   const { hooks, children } = props;
   const helpers = React.useMemo(
     () => ({ ...coreHelpers, ...(hooks ?? {}) }),
     [hooks],
-  ) as CoreHelpers & (TValue extends Record<string, Fn> ? TValue : {});
+  ) as CoreHelpers & TValue;
   return <>{children(helpers)}</>;
 }

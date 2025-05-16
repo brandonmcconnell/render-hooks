@@ -595,7 +595,7 @@ export function NestedExample() {
             return (
               <li>
                 <button onClick={() => setExpanded(!expanded)}>
-                  {expanded ? '▾' : '▸'} {cat.name} ({likes} like{likes === 1 ? '' : 's'})
+                  {expanded ? '▾' : '▸'} {cat.name} {likes === 0 ? '🖤' : '❤️'.repeat(likes)} ({likes} like{likes === 1 ? '' : 's'})
                   {isPending && ' (updating...)'}
                 </button>
 
@@ -622,7 +622,7 @@ export function NestedExample() {
                             <li>
                               {post.title}{' '}
                               <button onClick={toggleLike}>
-                                {liked ? '♥︎ Liked' : '♡ Like'}
+                                {liked ? '❤️ Liked' : '🖤 Like'}
                               </button>
                             </li>
                           );
