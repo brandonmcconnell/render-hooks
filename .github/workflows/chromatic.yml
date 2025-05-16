@@ -19,6 +19,9 @@ jobs:
         run: npm ci
       - name: Run Chromatic
         uses: chromaui/action@latest
+        env:
+          # Expose the secret so Vite/Storybook can replace `import.meta.env.STORYBOOK_CODESANDBOX_TOKEN`
+          STORYBOOK_CODESANDBOX_TOKEN: ${{ secrets.STORYBOOK_CODESANDBOX_TOKEN }}
         with:
           # ⚠️ Make sure to configure a `CHROMATIC_PROJECT_TOKEN` repository secret
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}

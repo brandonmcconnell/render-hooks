@@ -9,7 +9,7 @@ const preview: Preview = {
        * This sandbox is created inside the given workspace
        * and can be shared with team members.
        */
-      apiToken: import.meta.env.STORYBOOK_CODESANDBOX_TOKEN!,
+      apiToken: process.env.STORYBOOK_CODESANDBOX_TOKEN,
  
       /**
        * @required
