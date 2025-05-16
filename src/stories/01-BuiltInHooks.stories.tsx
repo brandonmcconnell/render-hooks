@@ -237,9 +237,7 @@ export function Example_useInsertionEffect() {
             style.id = id;
             style.textContent = `.flash-insertion{animation:flash-insertion 1s steps(2) infinite;} @keyframes flash-insertion{to{opacity:.2}}`;
             document.head.append(style);
-            console.log('Insertion effect: style injected');
             return () => {
-              console.log('Insertion effect: style removed');
               document.getElementById(id)?.remove();
             };
           }, []);
@@ -258,7 +256,6 @@ export function Example_useId() {
       {({ useId, useState }) => {
         const id = useId();
         const [val, setVal] = useState('');
-        console.log('id', id);
         return (
           <div>
             <label htmlFor={id}>Name (useId):</label> (id: <code style={{ background: '#ddd' }}>{id}</code>)
