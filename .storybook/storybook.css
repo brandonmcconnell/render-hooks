@@ -15,3 +15,7 @@ body {
 [data-story-block] > [data-name] {
   padding: 24px;
 }
+
+.docs-story {
+  color: #eee;
+}

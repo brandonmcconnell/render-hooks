@@ -5,10 +5,7 @@ import './storybook.css';
 const preview: Preview = {
   parameters: {
     docs: {
-      theme: {
-        ...theme,
-        base: 'light',
-      },
+      theme,
     },
     codesandbox: {
       /**

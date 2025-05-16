@@ -138,7 +138,10 @@ export function Example_useLayoutEffect() {
       {({ useRef, useLayoutEffect }) => {
         const box = useRef<HTMLDivElement>(null);
         useLayoutEffect(() => {
-          if (box.current) box.current.style.background = '#ffd54f';
+          if (box.current) {
+            box.current.style.background = '#ffd54f';
+            box.current.style.color = '#000';
+          }
         }, []);
         return <div ref={box} style={{ padding: '5px', border: '1px solid grey'}}> Div (useLayoutEffect) highlighted after layout </div>;
       }}
@@ -258,7 +261,7 @@ export function Example_useId() {
         const [val, setVal] = useState('');
         return (
           <div>
-            <label htmlFor={id}>Name (useId):</label> (id: <code style={{ background: '#ddd' }}>{id}</code>)
+            <label htmlFor={id}>Name (useId):</label> (id: <code style={{ background: '#555', color: '#fff' }}>{id}</code>)
             <br />
             <input id={id} value={val} onChange={(e) => setVal(e.target.value)} style={{marginLeft: '5px'}}/>  (id: <code style={{ background: '#ddd' }}>{id}</code>)
           </div>
