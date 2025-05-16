@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act as rtlAct } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act as rtlAct, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import $ from './index'; // Assuming RenderHooks is the default export from src/index.tsx
 import { useFormStatus as reactDom_useFormStatus } from 'react-dom'; // Import for useFormStatus test
@@ -630,5 +630,198 @@ describe('RenderHooks Component', () => {
       expect(debouncedState).toHaveTextContent('debounced: true');
       vi.useRealTimers(); // Added for debounce
     }, 5000); // Added test-specific timeout
+  });
+}); 
+
+// --- New Test Suite for NestedImpactfulExample ---
+
+type Category = {
+  id: number;
+  name: string;
+  posts: { id: number; title: string }[];
+};
+
+const data: Category[] = [
+  {
+    id: 1,
+    name: 'Tech',
+    posts: [{ id: 11, title: 'Next-gen CSS' }],
+  },
+  {
+    id: 2,
+    name: 'Life',
+    posts: [
+      { id: 21, title: 'Minimalism' },
+      { id: 22, title: 'Travel hacks' },
+    ],
+  },
+];
+
+// This is the component from README.md
+const NestedImpactfulExample = () => {
+  return (
+    <ul>
+      {data.map((cat) => (
+        /* ───── 1️⃣  Outer RenderHooks for each category row ───── */
+        <$ key={cat.id}>
+          {({ useState, useTransition }) => {
+            const [expanded, setExpanded] = useState(false);
+            const [likes, setLikes] = useState(0); 
+            const [isPending, startTransition] = useTransition();
+
+            return (
+              <li>
+                <button onClick={() => setExpanded(!expanded)}>
+                  {expanded ? '▾' : '▸'} {cat.name} ({likes} like{likes === 1 ? '' : 's'})
+                  {isPending && ' (updating...)'}
+                </button>
+
+                {expanded && (
+                  <ul>
+                    {cat.posts.map((post) => (
+                      /* ───── 2️⃣  Inner RenderHooks per post row ───── */
+                      <$ key={post.id}>
+                        {({ useState: useItemState }) => {
+                          const [liked, setItemLiked] = useItemState(false);
+
+                          const toggleLike = () => {
+                            setItemLiked((prev) => {
+                              const next = !prev;
+                              // 🔄 update outer «likes» when this post toggles, wrapped in outer transition
+                              startTransition(() => {
+                                setLikes((c) => c + (next ? 1 : -1));
+                              });
+                              return next;
+                            });
+                          };
+
+                          return (
+                            <li>
+                              {post.title}{' '}
+                              <button onClick={toggleLike}>
+                                {liked ? '♥︎ Liked' : '♡ Like'}
+                              </button>
+                            </li>
+                          );
+                        }}
+                      </$>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            );
+          }}
+        </$>
+      ))}
+    </ul>
+  );
+};
+
+describe('NestedImpactfulExample from README', () => {
+  it('should render initial state correctly', () => {
+    render(<NestedImpactfulExample />);
+    expect(screen.getByText(/▸ Tech \(0 likes\)/)).toBeInTheDocument();
+    expect(screen.getByText(/▸ Life \(0 likes\)/)).toBeInTheDocument();
+    expect(screen.queryByText('Next-gen CSS')).not.toBeInTheDocument();
+    expect(screen.queryByText('Minimalism')).not.toBeInTheDocument();
+  });
+
+  it('should expand and collapse categories', () => {
+    render(<NestedImpactfulExample />);
+    const techCategoryButton = screen.getByText(/▸ Tech \(0 likes\)/);
+    fireEvent.click(techCategoryButton);
+    expect(screen.getByText(/▾ Tech \(0 likes\)/)).toBeInTheDocument();
+    expect(screen.getByText('Next-gen CSS')).toBeInTheDocument();
+    fireEvent.click(techCategoryButton);
+    expect(screen.getByText(/▸ Tech \(0 likes\)/)).toBeInTheDocument();
+    expect(screen.queryByText('Next-gen CSS')).not.toBeInTheDocument();
+  });
+
+  it('should allow liking/unliking posts and update category likes', () => {
+    render(<NestedImpactfulExample />);
+    const techCategoryButton = screen.getByText(/▸ Tech \(0 likes\)/);
+    fireEvent.click(techCategoryButton); // Expand Tech category
+
+    const techPostLikeButton = screen.getByRole('button', { name: '♡ Like' });
+    expect(techPostLikeButton).toBeInTheDocument();
+
+    // Like the post
+    rtlAct(() => {
+      fireEvent.click(techPostLikeButton);
+    });
+    expect(screen.getByText(/Tech \(1 like\)/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '♥︎ Liked' })).toBeInTheDocument();
+
+    // Unlike the post
+    rtlAct(() => {
+      fireEvent.click(techPostLikeButton); // techPostLikeButton reference should still be valid as text content changed but not the element itself
+    });
+    expect(screen.getByText(/Tech \(0 likes\)/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '♡ Like' })).toBeInTheDocument();
+  });
+
+  it('should handle multiple posts and maintain independent likes within a category', async () => {
+    render(<NestedImpactfulExample />);
+    const lifeCategoryButton = screen.getByText(/▸ Life \(0 likes\)/);
+    fireEvent.click(lifeCategoryButton); // Expand Life category
+
+    const minimalismListItem = screen.getByText('Minimalism').closest('li')!;
+    const travelHacksListItem = screen.getByText('Travel hacks').closest('li')!;
+
+    const minimalismLikeButton = within(minimalismListItem).getByRole('button', { name: /Like|Liked/i });
+    const travelHacksLikeButton = within(travelHacksListItem).getByRole('button', { name: /Like|Liked/i });
+    
+    // Like Minimalism
+    await rtlAct(async () => {
+      fireEvent.click(minimalismLikeButton);
+    });
+    expect(screen.getByText(/Life \(1 like\)/)).toBeInTheDocument();
+    expect(minimalismLikeButton).toHaveTextContent('♥︎ Liked');
+    expect(travelHacksLikeButton).toHaveTextContent('♡ Like');
+
+    // Like Travel hacks
+    await rtlAct(async () => {
+      fireEvent.click(travelHacksLikeButton);
+    });
+    expect(screen.getByText(/Life \(2 likes\)/)).toBeInTheDocument();
+    expect(minimalismLikeButton).toHaveTextContent('♥︎ Liked');
+    expect(travelHacksLikeButton).toHaveTextContent('♥︎ Liked');
+
+    // Unlike Minimalism
+    await rtlAct(async () => {
+      fireEvent.click(minimalismLikeButton);
+    });
+    expect(screen.getByText(/Life \(1 like\)/)).toBeInTheDocument();
+    expect(minimalismLikeButton).toHaveTextContent('♡ Like');
+    expect(travelHacksLikeButton).toHaveTextContent('♥︎ Liked');
+  });
+
+  it('should maintain independent state between categories', async () => {
+    render(<NestedImpactfulExample />);
+    const techCategoryButton = screen.getByText(/▸ Tech \(0 likes\)/);
+    const lifeCategoryButton = screen.getByText(/▸ Life \(0 likes\)/);
+
+    // Expand Tech and like its post
+    fireEvent.click(techCategoryButton);
+    const techPostListItem = screen.getByText('Next-gen CSS').closest('li')!;
+    const techPostLikeButton = within(techPostListItem).getByRole('button', { name: /Like|Liked/i });
+    await rtlAct(async () => {
+      fireEvent.click(techPostLikeButton);
+    });
+    expect(screen.getByText(/Tech \(1 like\)/)).toBeInTheDocument();
+    expect(screen.getByText(/Life \(0 likes\)/)).toBeInTheDocument(); // Life category unchanged
+
+    // Expand Life and like one of its posts
+    fireEvent.click(lifeCategoryButton);
+    const minimalismListItemForLife = screen.getByText('Minimalism').closest('li')!;
+    const minimalismLikeButtonInLife = within(minimalismListItemForLife).getByRole('button', { name: /Like|Liked/i });
+    await rtlAct(async () => {
+      fireEvent.click(minimalismLikeButtonInLife);
+    });
+    expect(screen.getByText(/Tech \(1 like\)/)).toBeInTheDocument(); // Tech category unchanged
+    expect(screen.getByText(/Life \(1 like\)/)).toBeInTheDocument();
+    
+    // Check that Life category expansion did not affect Tech posts visibility
+    expect(screen.getByText('Next-gen CSS')).toBeInTheDocument(); // Tech post still visible
   });
 }); 
