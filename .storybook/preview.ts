@@ -1,7 +1,10 @@
 import type { Preview } from '@storybook/react'
-
+import theme from './Theme'
 const preview: Preview = {
   parameters: {
+    docs: {
+      theme,
+    },
     codesandbox: {
       /**
        * @required
