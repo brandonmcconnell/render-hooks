@@ -25,7 +25,7 @@ const useDebounce = <T,>(value: T, delay: number): T => {
 // End of dummy custom hooks
 
 // Copied from README.md Custom Hooks section
-function CustomHooksIntegrationExample() {
+export function CustomHooksExample() {
   return (
     <$ hooks={{ useToggle, useDebounce }}>
       {/* @ts-ignore */}
@@ -47,10 +47,11 @@ function CustomHooksIntegrationExample() {
     </$>
   );
 }
+CustomHooksExample.storyName = 'Using Custom Hooks';
 
-const meta: Meta<typeof CustomHooksIntegrationExample> = {
+const meta: Meta<typeof CustomHooksExample> = {
   title: 'Examples/Custom Hooks',
-  component: CustomHooksIntegrationExample,
+  component: CustomHooksExample,
   parameters: {
     layout: 'centered',
   },
@@ -58,8 +59,3 @@ const meta: Meta<typeof CustomHooksIntegrationExample> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-  name: 'Using Custom Hooks'
-}; 
