@@ -138,22 +138,58 @@ export function Example_useLayoutEffect() {
 Example_useLayoutEffect.storyName = 'useLayoutEffect';
 
 // --- useImperativeHandle --- 
-const FancyInput = React.forwardRef<HTMLInputElement>((_, ref) => (
-  <$>
-    {({ useRef, useImperativeHandle }) => {
-      const local = useRef<HTMLInputElement>(null);
-      useImperativeHandle(ref, () => ({ focus: () => local.current?.focus() } as HTMLInputElement));
-      return <input ref={local} placeholder="Fancy input (useImperativeHandle)" />;
-    }}
-  </$>
-));
-FancyInput.displayName = 'FancyInput';
+// (moved Collapsible implementation inside Example_useImperativeHandle below)
 export function Example_useImperativeHandle() {
-  const fancyRef = React.useRef<HTMLInputElement>(null);
+  // Define the imperative handle type and the Collapsible component locally so everything is self-contained.
+  type CollapsibleHandle = {
+    open: () => void;
+    close: () => void;
+    toggle: () => void;
+  };
+
+  const Collapsible = React.useMemo(() => {
+    const C = React.forwardRef<CollapsibleHandle, { title: string; children?: React.ReactNode }>(
+      ({ title, children }, ref) => (
+        <$>
+          {({ useState, useImperativeHandle }) => {
+            const [open, setOpen] = useState(false);
+
+            useImperativeHandle(ref, () => ({
+              open: () => setOpen(true),
+              close: () => setOpen(false),
+              toggle: () => setOpen((o) => !o),
+            }));
+
+            return (
+              <div>
+                <button onClick={() => setOpen((o) => !o)}>
+                  {open ? 'Hide' : 'Show'} {title}
+                </button>
+                {open && (
+                  <div style={{ border: '1px solid grey', marginTop: '5px', padding: '5px' }}>{children}</div>
+                )}
+              </div>
+            );
+          }}
+        </$>
+      ),
+    );
+    return C;
+  }, []);
+
+  const panelRef = React.useRef<CollapsibleHandle>(null);
+
   return (
     <div>
-      <FancyInput ref={fancyRef} />
-      <button onClick={() => fancyRef.current?.focus()}>Focus Fancy Input</button>
+      <Collapsible ref={panelRef} title="Details">
+        <p>This content can be toggled imperatively using the buttons below or via the panel header.</p>
+      </Collapsible>
+
+      <div style={{ marginTop: '10px', display: 'flex', gap: '5px' }}>
+        <button onClick={() => panelRef.current?.open()}>Open (imperative)</button>
+        <button onClick={() => panelRef.current?.close()}>Close (imperative)</button>
+        <button onClick={() => panelRef.current?.toggle()}>Toggle (imperative)</button>
+      </div>
     </div>
   );
 }
@@ -212,10 +248,12 @@ export function Example_useId() {
       {({ useId, useState }) => {
         const id = useId();
         const [val, setVal] = useState('');
+        console.log('id', id);
         return (
           <div>
-            <label htmlFor={id}>Name (useId):</label>
-            <input id={id} value={val} onChange={(e) => setVal(e.target.value)} style={{marginLeft: '5px'}}/>
+            <label htmlFor={id}>Name (useId):</label> (id: <code style={{ background: '#ddd' }}>{id}</code>)
+            <br />
+            <input id={id} value={val} onChange={(e) => setVal(e.target.value)} style={{marginLeft: '5px'}}/>  (id: <code style={{ background: '#ddd' }}>{id}</code>)
           </div>
         );
       }}
@@ -389,21 +427,22 @@ export function Example_useFormStatus() {
 Example_useFormStatus.storyName = 'useFormStatus';
 
 // --- use (awaitable hook) --- 
-// Helper function for the 'use' example
-let quotePromise: Promise<string>;
-const fetchQuote = () => {
-  quotePromise = new Promise<string>((resolve) =>
-    setTimeout(() => resolve('"Ship early, ship often." (from use hook)'), 800),
-  );
-  return quotePromise;
-};
-
 export function Example_use() {
   if (!React.use) {
     return <p>React.use is not available in this version of React.</p>;
   }
-  // To make this storybook-friendly and re-runnable, we reset the promise on each render.
-  // In a real app, you might fetch once or based on props.
+  // Helper function for the 'use' example
+  let quotePromise: Promise<string>;
+  const fetchQuote = () => {
+    quotePromise = new Promise<string>((resolve) =>
+      setTimeout(() => resolve('"Ship early, ship often." (from use hook)'), 800),
+    );
+    return quotePromise;
+  };
+  /**
+   * To make this storybook-friendly and re-runnable, we reset the promise on each render.
+   * In a real app, you might fetch once or based on props.
+   */
   fetchQuote(); 
 
   return (
