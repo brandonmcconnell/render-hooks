@@ -80,11 +80,21 @@ Example_useContext.storyName = 'useContext';
 export function Example_useMemo() {
   return (
     <$>
-      {({ useState, useMemo }) => {
+      {({ useState, useMemo, useRef }) => {
         const [n, setN] = useState(5); // Smaller default for story
+
+        // A ref-based cache that survives across renders and different n values
+        const cache = useRef<Map<number, number>>(new Map());
+
         const fib = useMemo(() => {
-          const f = (x: number): number => (x <= 1 ? x : f(x - 1) + f(x - 2));
-          return f(n);
+          const memoFib = (k: number): number => {
+            const m = cache.current;
+            if (m.has(k)) return m.get(k)!;
+            const val = k <= 1 ? k : memoFib(k - 1) + memoFib(k - 2);
+            m.set(k, val);
+            return val;
+          };
+          return memoFib(n);
         }, [n]);
         return (
           <div>
@@ -95,7 +105,7 @@ export function Example_useMemo() {
               onChange={(e) => setN(+e.target.value)}
               style={{width: '50px'}}
             />
-            <p>Fib({n}) (useMemo) = {fib}</p>
+            <p>Fib({n}) (cached with useMemo+ref) = {fib}</p>
           </div>
         );
       }}
