@@ -1,6 +1,6 @@
 {
   "name": "render-hooks",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Inline render-block-stable React hooks",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
