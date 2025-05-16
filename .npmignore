@@ -25,4 +25,7 @@ stories/
 
 # Git
 .git/
-.gitignore 
+.gitignore
+.env
+
+# Other 

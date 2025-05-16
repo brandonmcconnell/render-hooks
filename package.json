@@ -19,7 +19,8 @@
     "dev": "tsdown src/index.tsx --out-dir dist --dts --watch --format cjs,esm",
     "prepublishOnly": "npm run test && npm run build",
     "storybook": "storybook dev -p 6006",
-    "storybook:build": "storybook build"
+    "storybook:build": "storybook build",
+    "chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build"
   },
   "files": [
     "dist",
