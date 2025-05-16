@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import React from 'react'; // React is implicitly used by JSX and useState
 import $ from '../index';
 

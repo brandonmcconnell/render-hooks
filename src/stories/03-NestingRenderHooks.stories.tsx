@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import React from 'react'; // Needed for useState, useTransition in this example
 import $ from '../index';
 
@@ -92,11 +92,11 @@ export function NestedExample() {
     </ul>
   );
 }
-NestedExample.storyName = 'Nesting RenderHooks';
+NestedExample.storyName = 'Using Nested Hooks';
 // End of copied code
 
 const meta: Meta<typeof NestedExample> = {
-  title: 'Examples/Nesting RenderHooks',
+  title: 'Examples/Nested Hooks',
   component: NestedExample,
   parameters: {
     layout: 'padded',
