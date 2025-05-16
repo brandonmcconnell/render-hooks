@@ -3,7 +3,7 @@ import React from 'react'; // React is implicitly used by JSX and useState
 import $ from '../index';
 
 // Copied from README.md Quick Start
-export function Counter() {
+function Counter() {
   return (
     <$>
       {({ useState }) => {

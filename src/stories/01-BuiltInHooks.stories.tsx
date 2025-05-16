@@ -4,7 +4,7 @@ import $ from '../index'; // Adjust path as necessary
 import { useFormStatus as reactDom_useFormStatus } from 'react-dom'; // For useFormStatus example
 
 // --- useState --- 
-export function UseStateExample() {
+function UseStateExample() {
   return (
     <$>
       {({ useState }) => {
@@ -16,7 +16,7 @@ export function UseStateExample() {
 }
 
 // --- useReducer --- 
-export function UseReducerExample() {
+function UseReducerExample() {
   return (
     <$>
       {({ useReducer }) => {
@@ -37,7 +37,7 @@ export function UseReducerExample() {
 }
 
 // --- useCallback --- 
-export function UseCallbackExample() {
+function UseCallbackExample() {
   return (
     <$>
       {({ useState, useCallback }) => {
@@ -52,7 +52,7 @@ export function UseCallbackExample() {
 
 // --- useContext --- 
 const ThemeCtx = React.createContext<'light' | 'dark'>('light');
-export function UseContextExample() {
+function UseContextExample() {
   return (
     <ThemeCtx.Provider value="dark">
       <$>
@@ -63,7 +63,7 @@ export function UseContextExample() {
 }
 
 // --- useMemo --- 
-export function UseMemoExample() {
+function UseMemoExample() {
   return (
     <$>
       {({ useState, useMemo }) => {
@@ -90,7 +90,7 @@ export function UseMemoExample() {
 }
 
 // --- useEffect --- 
-export function UseEffectExample() {
+function UseEffectExample() {
   return (
     <$>
       {({ useState, useEffect }) => {
@@ -106,7 +106,7 @@ export function UseEffectExample() {
 }
 
 // --- useLayoutEffect --- 
-export function UseLayoutEffectExample() {
+function UseLayoutEffectExample() {
   return (
     <$>
       {({ useRef, useLayoutEffect }) => {
@@ -131,7 +131,7 @@ const FancyInput = React.forwardRef<HTMLInputElement>((_, ref) => (
   </$>
 ));
 FancyInput.displayName = 'FancyInput';
-export function UseImperativeHandleExample() {
+function UseImperativeHandleExample() {
   const fancyRef = React.useRef<HTMLInputElement>(null);
   return (
     <div>
@@ -142,7 +142,7 @@ export function UseImperativeHandleExample() {
 }
 
 // --- useRef --- 
-export function UseRefExample() {
+function UseRefExample() {
   return (
     <$>
       {({ useRef }) => {
@@ -159,7 +159,7 @@ export function UseRefExample() {
 }
 
 // --- useInsertionEffect --- 
-export function UseInsertionEffectExample() {
+function UseInsertionEffectExample() {
   const [show, setShow] = React.useState(true);
   const id = 'insertion-effect-style';
   return (
@@ -186,7 +186,7 @@ export function UseInsertionEffectExample() {
 }
 
 // --- useId --- 
-export function UseIdExample() {
+function UseIdExample() {
   return (
     <$>
       {({ useId, useState }) => {
@@ -204,7 +204,7 @@ export function UseIdExample() {
 }
 
 // --- useSyncExternalStore --- 
-export function UseSyncExternalStoreExample() {
+function UseSyncExternalStoreExample() {
   return (
     <$>
       {({ useSyncExternalStore }) => {
@@ -223,7 +223,7 @@ export function UseSyncExternalStoreExample() {
 }
 
 // --- useDeferredValue --- 
-export function UseDeferredValueExample() {
+function UseDeferredValueExample() {
   return (
     <$>
       {({ useState, useDeferredValue }) => {
@@ -241,7 +241,7 @@ export function UseDeferredValueExample() {
 }
 
 // --- useTransition --- 
-export function UseTransitionExample() {
+function UseTransitionExample() {
   return (
     <$>
       {({ useState, useTransition }) => {
@@ -264,7 +264,7 @@ export function UseTransitionExample() {
 }
 
 // --- useActionState --- 
-export function UseActionStateExample() {
+function UseActionStateExample() {
   if (!React.useActionState) {
     return <p>React.useActionState is not available in this version of React.</p>;
   }
@@ -305,7 +305,7 @@ const FormStatusButton = () => {
     </$>
   );
 };
-export function UseFormStatusExample() {
+function UseFormStatusExample() {
   if (!reactDom_useFormStatus) { // Check if the imported one exists
     return <p>ReactDOM.useFormStatus is not available in this version of React DOM.</p>;
   }
@@ -339,7 +339,7 @@ const fetchQuote = () => {
   return quotePromise;
 };
 
-export function UseAwaitExample() {
+function UseAwaitExample() {
   if (!React.use) {
     return <p>React.use is not available in this version of React.</p>;
   }
