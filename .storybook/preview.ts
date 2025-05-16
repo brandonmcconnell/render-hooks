@@ -24,7 +24,9 @@ const preview: Preview = {
        * Example:
        */
       dependencies: {
-        "@radix-ui/themes": "latest",
+        "render-hooks": "latest",
+        "react": "latest",
+        "react-dom": "latest",
       },
  
       /**
@@ -35,27 +37,7 @@ const preview: Preview = {
        * This property is useful when your components imports are predictable
        * and come from a single package and entry point.
        */
-      fallbackImport: "@radix-ui/themes",
- 
-      /**
-       * @optional
-       * All required providers to run the sandbox properly,
-       * such as themes, i18n, store, and so on.
-       *
-       * @note Remember to use only the dependencies listed above.
-       *
-       * Example:
-       */
-      provider: `import { Theme } from "@radix-ui/themes";
-        import '@radix-ui/themes/styles.css';
- 
-        export default ThemeProvider = ({ children }) => {
-          return (
-            <Theme>
-              {children}
-            </Theme>
-          )
-        }`,
+      fallbackImport: "render-hooks",
     },
     controls: {
       matchers: {
