@@ -1,10 +1,10 @@
-# Render Hooks
+# RenderHooks
 
 *Inline React hooks inside JSX.*
 
 Render Hooks lets you place hooks right next to the markup that needs them—no wrapper components, no breaking the [Rules of Hooks](https://react.dev/reference/rules/rules-of-hooks), and zero boilerplate even when you supply your own custom hooks.
 
-- [Render Hooks](#render-hooks)
+- [RenderHooks](#renderhooks)
   - [📖 How it works](#-how-it-works)
   - [✨ Features](#-features)
   - [🚀 Install](#-install)
