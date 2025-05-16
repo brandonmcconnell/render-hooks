@@ -1,43 +1,47 @@
-# RenderHooks
+<h5 align="center"><img src="./.github/render-hooks-logo_full.png?raw=true" width="100%" height="auto" alt="Anchors for Tailwind CSS" /></h5>
 
-*Inline React hooks inside JSX.*
+<div align="center">
+<b><i>RenderHooks (<code>render-hooks</code>)</i></b><br>
+<small><i>Use hooks inline in React/JSX</i></small>
+</div><br>
 
-Render Hooks lets you place hooks right next to the markup that needs them—no wrapper components, no breaking the [Rules of Hooks](https://react.dev/reference/rules/rules-of-hooks), and zero boilerplate even when you supply your own custom hooks.
+RenderHooks lets you place hooks right next to the markup that needs them—no wrapper components, no breaking the [Rules of Hooks](https://react.dev/reference/rules/rules-of-hooks), and zero boilerplate, even when you supply your own custom hooks.
 
-- [RenderHooks](#renderhooks)
-  - [📖 How it works](#-how-it-works)
-  - [✨ Features](#-features)
-  - [🚀 Install](#-install)
-  - [⚡ Quick start](#-quick-start)
-  - [🧩 API](#-api)
-  - [📚 Examples by hook](#-examples-by-hook)
-    - [`useState` (React ≥ 16.8)](#usestatereact--168)
-    - [`useReducer` (React ≥ 16.8)](#usereducerreact--168)
-    - [`useCallback` (React ≥ 16.8)](#usecallbackreact--168)
-    - [`useContext` (React ≥ 16.8)](#usecontextreact--168)
-    - [`useMemo` (React ≥ 16.8)](#usememoreact--168)
-    - [`useEffect` (React ≥ 16.8)](#useeffectreact--168)
-    - [`useLayoutEffect` (React ≥ 16.8)](#uselayouteffectreact--168)
-    - [`useImperativeHandle` (React ≥ 16.8)](#useimperativehandlereact--168)
-    - [`useRef` (React ≥ 16.8)](#userefreact--168)
-    - [`useInsertionEffect` (React ≥ 18)](#useinsertioneffectreact--18)
-    - [`useId` (React ≥ 18)](#useidreact--18)
-    - [`useSyncExternalStore` (React ≥ 18)](#usesyncexternalstorereact--18)
-    - [`useDeferredValue` (React ≥ 18)](#usedeferredvaluereact--18)
-    - [`useTransition` (React ≥ 18)](#usetransitionreact--18)
-    - [`useActionState` (React ≥ 19, experimental in 18)](#useactionstatereact--19-experimental-in-18)
-    - [`useFormStatus` (React-DOM ≥ 19)](#useformstatusreact-dom--19)
-    - [`use` (awaitable hook, React ≥ 19)](#useawaitable-hook-react--19)
-  - [🛠 Custom hooks](#-custom-hooks)
-  - [🧱 Nesting `RenderHooks`](#-nesting-renderhooks)
-  - [🤝 Collaboration](#-collaboration)
-  - [📝 License](#-license)
+---
+
+- [📖 How it works](#-how-it-works)
+- [✨ Features](#-features)
+- [🚀 Install](#-install)
+- [⚡ Quick start](#-quick-start)
+- [🧩 API](#-api)
+- [📚 Examples by hook](#-examples-by-hook)
+  - [`useState` (React ≥ 16.8)](#usestatereact--168)
+  - [`useReducer` (React ≥ 16.8)](#usereducerreact--168)
+  - [`useCallback` (React ≥ 16.8)](#usecallbackreact--168)
+  - [`useContext` (React ≥ 16.8)](#usecontextreact--168)
+  - [`useMemo` (React ≥ 16.8)](#usememoreact--168)
+  - [`useEffect` (React ≥ 16.8)](#useeffectreact--168)
+  - [`useLayoutEffect` (React ≥ 16.8)](#uselayouteffectreact--168)
+  - [`useImperativeHandle` (React ≥ 16.8)](#useimperativehandlereact--168)
+  - [`useRef` (React ≥ 16.8)](#userefreact--168)
+  - [`useInsertionEffect` (React ≥ 18)](#useinsertioneffectreact--18)
+  - [`useId` (React ≥ 18)](#useidreact--18)
+  - [`useSyncExternalStore` (React ≥ 18)](#usesyncexternalstorereact--18)
+  - [`useDeferredValue` (React ≥ 18)](#usedeferredvaluereact--18)
+  - [`useTransition` (React ≥ 18)](#usetransitionreact--18)
+  - [`useActionState` (React ≥ 19, experimental in 18)](#useactionstatereact--19-experimental-in-18)
+  - [`useFormStatus` (React-DOM ≥ 19)](#useformstatusreact-dom--19)
+  - [`use` (awaitable hook, React ≥ 19)](#useawaitable-hook-react--19)
+- [🛠 Custom hooks](#-custom-hooks)
+- [🧱 Nesting hooks](#-nesting-hooks)
+- [🤝 Collaboration](#-collaboration)
+  - [How to contribute](#how-to-contribute)
 
 ---
 
 ## 📖 How it works
 
-1. At runtime Render Hooks scans the installed `react` and `react-dom`
+1. At runtime RenderHooks scans the installed `react` and `react-dom`
    modules and wraps every export whose name starts with **`use`**.
 2. A TypeScript mapped type reproduces *exactly* the same keys from the typings,
    so autocompletion never lies.
@@ -65,7 +69,7 @@ Render Hooks lets you place hooks right next to the markup that needs them—no 
 npm install render-hooks             # or yarn / pnpm / bun
 ```
 
-Render Hooks lists **`react`** and **`react-dom`** as peer dependencies, so it
+RenderHooks lists **`react`** and **`react-dom`** as peer dependencies, so it
 always tracks *your* versions.
 
 ---
@@ -549,7 +553,7 @@ export function Example() {
 
 ---
 
-## 🧱 Nesting `RenderHooks`
+## 🧱 Nesting hooks
 
 You can nest `RenderHooks` (`$`) as deeply as you need. Each instance provides its own fresh set of hooks, scoped to its render callback. This is particularly useful for managing item-specific state within loops, where you'd otherwise need to create separate components.
 
@@ -656,10 +660,19 @@ This demonstrates not only nesting for independent state but also how functions 
 
 ## 🤝 Collaboration
 
-I welcome any issues or pull requests. Thank you for checking out the package!
+RenderHooks is a community-driven project. Every idea, issue, and pull request helps it grow and improve.
 
----
+Whether you're fixing a typo or implementing a brand-new feature, **you're warmly welcome here!** ✨
 
-## 📝 License
+### How to contribute
 
-MIT © 2025 Brandon McConnell
+1. ⭐️ **Star the repo** – it helps others discover the project and shows your support.
+2. 🐛 **Report bugs / request features** – open an issue and describe the problem or idea. Reproduction steps or code snippets are golden.
+3. 📚 **Improve the docs** – spot a typo, unclear wording, or missing example? Submit a quick PR.
+4. 👩‍💻 **Send code changes** – bug fixes, performance tweaks, new examples, or custom hooks… big or small, they're all appreciated. If you're unsure, open a draft PR and we'll figure it out together.
+5. 💬 **Join the conversation** – comment on issues & PRs, share how you're using RenderHooks, or ask questions. First-time contributors are encouraged to jump in!
+6. 📣 **Share it** - if you love it, please share it! I want to grow this tool into something that makes all of our day-to-day lives a bit easier, so no gate-keeping. 
+
+If this would be your **first open-source contribution**, don't hesitate to ask for guidance—I'll happily walk you through the process.
+
+Thank you for making RenderHooks better for everyone! 🙏
