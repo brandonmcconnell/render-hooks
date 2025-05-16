@@ -18,6 +18,7 @@ coverage/
 # Storybook
 .storybook/
 stories/
+storybook-static/
 
 # Other
 .DS_Store

@@ -124,3 +124,4 @@ out
 # Gatsby Supabase cache files
 .gatsby-supabase-cache 
 *storybook.log
+storybook-static/
