@@ -26,8 +26,8 @@ function wrap<F extends Fn>(fn: F): F {
   return ((...args: Parameters<F>): ReturnType<F> => fn(...args)) as F;
 }
 
-function collectHooks<T>(src: T): Partial<ExtractHooks<T>> {
-  const out: Partial<ExtractHooks<T>> = {};
+function collectHooks<T>(src: T): ExtractHooks<T> {
+  const out = {} as ExtractHooks<T>;
 
   for (const key in src) {
     if (key.startsWith('use')) {

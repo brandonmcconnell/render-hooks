@@ -12,7 +12,7 @@ describe('RenderHooks Component', () => {
       const UseStateExample = () => (
         <$>
           {({ useState }) => {
-            const [value, set] = useState!('');
+            const [value, set] = useState('');
             return <input aria-label="value-input" value={value} onChange={(e) => set(e.target.value)} />;
           }}
         </$>
@@ -28,7 +28,7 @@ describe('RenderHooks Component', () => {
       const UseReducerExample = () => (
         <$>
           {({ useReducer }) => {
-            const [count, dispatch] = useReducer!(
+            const [count, dispatch] = useReducer(
               (s: number, a: 'inc' | 'dec') => (a === 'inc' ? s + 1 : s - 1),
               0,
             );
@@ -60,8 +60,8 @@ describe('RenderHooks Component', () => {
       const UseCallbackExample = () => (
         <$>
           {({ useState, useCallback }) => {
-            const [txt, setTxt] = useState!('');
-            const onChange = useCallback!(
+            const [txt, setTxt] = useState('');
+            const onChange = useCallback(
               (e: React.ChangeEvent<HTMLInputElement>) => {
                 setTxt(e.target.value);
                 mockFn(e.target.value);
@@ -83,7 +83,7 @@ describe('RenderHooks Component', () => {
       const UseContextExample = () => (
         <ThemeCtx.Provider value="dark">
           <$>
-            {({ useContext }) => <p>Theme: {useContext!(ThemeCtx)}</p>}
+            {({ useContext }) => <p>Theme: {useContext(ThemeCtx)}</p>}
           </$>
         </ThemeCtx.Provider>
       );
@@ -95,8 +95,8 @@ describe('RenderHooks Component', () => {
       const UseMemoExample = () => (
         <$>
           {({ useState, useMemo }) => {
-            const [n, setN] = useState!(5);
-            const fib = useMemo!(() => {
+            const [n, setN] = useState(5);
+            const fib = useMemo(() => {
               const f = (x: number): number => (x <= 1 ? x : f(x - 1) + f(x - 2));
               return f(n);
             }, [n]);
@@ -126,8 +126,8 @@ describe('RenderHooks Component', () => {
       const UseEffectExample = () => (
         <$>
           {({ useState, useEffect }) => {
-            const [time, setTime] = useState!('');
-            useEffect!(() => {
+            const [time, setTime] = useState('');
+            useEffect(() => {
               const id = setInterval(
                 () => {
                   const newTime = new Date().toLocaleTimeString();
@@ -162,8 +162,8 @@ describe('RenderHooks Component', () => {
       const UseLayoutEffectExample = () => (
         <$>
           {({ useRef, useLayoutEffect }) => {
-            const box = useRef!<HTMLDivElement>(null);
-            useLayoutEffect!(() => {
+            const box = useRef<HTMLDivElement>(null);
+            useLayoutEffect(() => {
               if (box.current) {
                 box.current.style.background = 'rgb(255, 213, 79)'; // #ffd54f
               }
@@ -181,8 +181,8 @@ describe('RenderHooks Component', () => {
       const Fancy = React.forwardRef<{ focus: () => void }>((_, ref) => (
         <$>
           {({ useRef, useImperativeHandle }) => {
-            const local = useRef!<HTMLInputElement>(null);
-            useImperativeHandle!(ref, () => ({
+            const local = useRef<HTMLInputElement>(null);
+            useImperativeHandle(ref, () => ({
               focus: () => local.current?.focus(),
             }));
             return <input ref={local} placeholder="Fancy input" defaultValue="fancy value" />;
@@ -212,7 +212,7 @@ describe('RenderHooks Component', () => {
       const UseRefExample = () => (
         <$>
           {({ useRef }) => {
-            const input = useRef!<HTMLInputElement>(null);
+            const input = useRef<HTMLInputElement>(null);
             return (
               <>
                 <button onClick={() => input.current?.focus()}>focus</button>
@@ -234,7 +234,7 @@ describe('RenderHooks Component', () => {
       const UseInsertionEffectExample = () => (
         <$>
           {({ useInsertionEffect }) => {
-            useInsertionEffect!(() => {
+            useInsertionEffect(() => {
               const style = document.createElement('style');
               style.id = 'flash-style';
               style.textContent = '.flash{animation:flash 1s steps(2) infinite;}\n@keyframes flash{to{opacity:.2}}';
@@ -260,8 +260,8 @@ describe('RenderHooks Component', () => {
       const UseIdExample = () => (
         <$>
           {({ useId, useState }) => {
-            const id = useId!();
-            const [v, set] = useState!('');
+            const id = useId();
+            const [v, set] = useState('');
             return (
               <>
                 <label htmlFor={id}>Name</label>
@@ -296,7 +296,7 @@ describe('RenderHooks Component', () => {
       const UseSyncExternalStoreExample = () => (
         <$>
           {({ useSyncExternalStore }) => {
-            const width = useSyncExternalStore!(
+            const width = useSyncExternalStore(
               subscribe,
               getSnapshot,
             );
@@ -326,8 +326,8 @@ describe('RenderHooks Component', () => {
       const UseDeferredValueExample = () => (
         <$>
           {({ useState, useDeferredValue }) => {
-            const [text, setText] = useState!('');
-            const deferred = useDeferredValue!(text);
+            const [text, setText] = useState('');
+            const deferred = useDeferredValue(text);
             return (
               <>
                 <input aria-label="deferred-input" value={text} onChange={(e) => setText(e.target.value)} />
@@ -362,8 +362,8 @@ describe('RenderHooks Component', () => {
       const UseTransitionExample = () => (
         <$>
           {({ useState, useTransition }) => {
-            const [list, setList] = useState!<string[]>([]);
-            const [pending, start] = useTransition!();
+            const [list, setList] = useState<string[]>([]);
+            const [pending, start] = useTransition();
             const filter = (e: React.ChangeEvent<HTMLInputElement>) => {
               const q = e.target.value;
               start(() => {
@@ -425,7 +425,7 @@ describe('RenderHooks Component', () => {
       const UseActionStateExample = () => (
         <$>
           {({ useActionState }) => {
-            const [msg, submit, pending] = useActionState!<string | null, FormData>(mockAction, null);
+            const [msg, submit, pending] = useActionState<string | null, FormData>(mockAction, null);
             return (
               <form 
                 action={submit as unknown as ((payload: FormData) => void) | string}
@@ -550,7 +550,7 @@ describe('RenderHooks Component', () => {
         <React.Suspense fallback={<p>Loading quote...</p>}>
           <$>
             {({ use }) => {
-                const quote = (use! as (promise: Promise<string>) => string)(fetchQuotePromise);
+                const quote = use(fetchQuotePromise);
                 return <blockquote>{quote}</blockquote>;
             }}
           </$>
@@ -596,8 +596,8 @@ describe('RenderHooks Component', () => {
       const CustomHooksExample = () => (
         <$ hooks={customHooks}>
           {({ useToggle, useDebounce }) => {
-            const [open, toggle] = useToggle!(false);
-            const dOpen = useDebounce!(open, 50);
+            const [open, toggle] = useToggle(false);
+            const dOpen = useDebounce(open, 50);
             return (
               <>
                 <button onClick={toggle}>toggle</button>
