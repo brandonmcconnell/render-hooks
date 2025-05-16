@@ -53,16 +53,54 @@ type CoreHelpers = typeof coreHelpers;
 /* ----------------------------------------------------------- *
  * 4 ▸ default component                                       *
  * ----------------------------------------------------------- */
-export default function RenderHooks<
+
+// Type for the custom hooks part, consistent with previous logic
+type CombinedCustomHooks<TValue extends Record<string, Fn>> = TValue extends Record<string, Fn> ? TValue : {};
+
+// Updated HelperArgs to include ref - now a type alias using intersection
+type FullHelperArgs<TValue extends Record<string, Fn>, RefType = unknown> =
+  CoreHelpers &
+  CombinedCustomHooks<TValue> &
+  {
+    ref?: React.ForwardedRef<RefType>;
+  };
+
+// Props for the RenderHooks component.
+// 'ref' and 'key' are handled by React.forwardRef and React itself.
+interface RenderHooksComponentProps<
   TValue extends Record<string, Fn> = {},
->(props: {
+  RefType = unknown,
+> {
   hooks?: TValue;
-  children: (helpers: CoreHelpers & (TValue extends Record<string, Fn> ? TValue : {})) => React.ReactNode;
-}): React.ReactElement {
-  const { hooks, children } = props;
-  const helpers = React.useMemo(
-    () => ({ ...coreHelpers, ...(hooks ?? {}) }),
-    [hooks],
-  ) as CoreHelpers & (TValue extends Record<string, Fn> ? TValue : {});
-  return <>{children(helpers)}</>;
+  children: (helpers: FullHelperArgs<TValue, RefType>) => React.ReactNode;
 }
+
+// The RenderHooks component, now wrapped in React.forwardRef
+const RenderHooks = React.forwardRef(
+  // Generic parameters for the render function of forwardRef
+  <TValue extends Record<string, Fn> = {}, RefType = unknown>(
+    props: RenderHooksComponentProps<TValue, RefType>,
+    ref: React.ForwardedRef<RefType> // The ref passed from the parent
+  ) => {
+    const { hooks: customHooksInput, children } = props;
+
+    // Memoize the merging of core and custom hooks.
+    // Custom hooks will override core hooks if names clash.
+    const mergedBaseHooks = React.useMemo(() => {
+      return { ...coreHelpers, ...(customHooksInput ?? {}) };
+    }, [customHooksInput]) as CoreHelpers & CombinedCustomHooks<TValue>;
+
+    // Combine merged hooks with the ref
+    const allHelpers: FullHelperArgs<TValue, RefType> = {
+      ...mergedBaseHooks,
+      ref,
+    };
+
+    // Render the children with all helpers
+    return <>{children(allHelpers)}</>;
+  }
+);
+
+RenderHooks.displayName = 'RenderHooks'; // Set display name for better debugging
+
+export default RenderHooks; // Export the forwardRef-wrapped component

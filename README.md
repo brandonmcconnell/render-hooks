@@ -272,22 +272,31 @@ export function UseLayoutEffectExample() {
 ### `useImperativeHandle` (React ≥ 16.8)
 
 ```tsx
-const Fancy = React.forwardRef<HTMLInputElement>((_, ref) => (
-  <$>
-    {({ useRef, useImperativeHandle }) => {
-      const local = useRef<HTMLInputElement>(null);
-      useImperativeHandle(ref, () => ({ focus: () => local.current?.focus() }));
-      return <input ref={local} placeholder="Fancy input" />;
-    }}
-  </$>
-));
-
 export function UseImperativeHandleExample() {
-  const ref = React.useRef<{ focus: () => void }>(null);
+  // The parent component needs a ref to interact imperatively.
+  const inputHandleRef = React.useRef<{ focusInput: () => void }>(null);
+
   return (
     <>
-      <Fancy ref={ref} />
-      <button onClick={() => ref.current?.focus()}>Focus</button>
+      <$>
+        {({ useRef, useImperativeHandle }) => {
+          // This local ref is for the input element itself.
+          const localInputRef = useRef<HTMLInputElement>(null);
+
+          // Expose a custom 'focusInput' function via the parent's ref.
+          useImperativeHandle(inputHandleRef, () => ({
+            focusInput: () => {
+              localInputRef.current?.focus();
+            },
+          }));
+
+          // Return the input element, now controllable via inputHandleRef.
+          return <input ref={localInputRef} placeholder="Focus me via button" />;
+        }}
+      </$>
+      <button onClick={() => inputHandleRef.current?.focusInput()}>
+        Focus the Input
+      </button>
     </>
   );
 }
@@ -651,6 +660,82 @@ This demonstrates not only nesting for independent state but also how functions 
 
 > [!IMPORTANT]
 > **Note on `startTransition`**: Using `startTransition` here is important. When an interaction (like clicking "Like") in a nested `RenderHooks` instance needs to update state managed by a parent `RenderHooks` instance, React might issue a warning about "updating one component while rendering another" if the update is synchronous. Wrapping the parent's state update in `startTransition` signals to React that this update can be deferred, preventing the warning and ensuring smoother UI updates. This is a general React pattern applicable when updates across component boundaries (or deeply nested state updates) might occur.
+
+---
+
+## 📎 Forwarding Refs with `RenderHooks`
+
+`RenderHooks` can participate in React's `ref` forwarding system. If you pass a `ref` prop to `<RenderHooks>` (or its alias, e.g., `<$ ref={myRef}>`), this `ref` becomes available inside the `children` render prop as `helpers.forwardedRef`.
+
+This is particularly useful when you're building a reusable component with `RenderHooks` that needs to expose a ref to one of its internal DOM elements.
+
+**Example: Building a `FocusableInputBox`**
+
+Imagine you want to create a `FocusableInputBox` component. A parent component should be able to get a ref to the underlying `<input>` element to control it imperatively (e.g., to focus it).
+
+```tsx
+import React from 'react'; // Needed for React.forwardRef, React.useRef, useState
+import $ from 'render-hooks'; // Or your chosen alias
+
+interface FocusableInputBoxProps {
+  initialValue?: string;
+  placeholder?: string;
+}
+
+// 1. FocusableInputBox is a ref-forwarding component itself.
+//    It accepts a ref of type HTMLInputElement.
+const FocusableInputBox = React.forwardRef<
+  HTMLInputElement,
+  FocusableInputBoxProps
+>((props, ref) => { // `ref` here is from the parent of FocusableInputBox
+  const { initialValue = '', placeholder } = props;
+
+  // 2. Pass the received `ref` directly to <RenderHooks>.
+  return (
+    <$ ref={ref}>
+      {/* 3. The `ref` is now available as `helpers.forwardedRef`. */}
+      {({ useState, forwardedRef }) => {
+        const [value, setValue] = useState(initialValue);
+
+        return (
+          <input
+            ref={forwardedRef} // 4. Assign it to the actual DOM element.
+            type="text"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder={placeholder || 'Focusable input...'}
+          />
+        );
+      }}
+    </$>
+  );
+});
+FocusableInputBox.displayName = 'FocusableInputBox'; // Good practice for DevTools
+
+// How to use FocusableInputBox:
+export function RefForwardingExample() {
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleClick = () => {
+    inputRef.current?.focus(); // Imperatively focus the input
+  };
+
+  return (
+    <>
+      <FocusableInputBox ref={inputRef} placeholder="Click button to focus me" />
+      <button onClick={handleClick}>Focus the Input Box</button>
+    </>
+  );
+}
+```
+
+**Explanation:**
+1.  `FocusableInputBox` is created using `React.forwardRef`, allowing it to receive a `ref` from its parent.
+2.  This `ref` is then passed as a prop to the `<RenderHooks>` component (`<$ ref={ref}>`).
+3.  Inside the `RenderHooks` children callback, this `ref` is accessible via `helpers.forwardedRef`.
+4.  `helpers.forwardedRef` is assigned to the `ref` attribute of the `<input>` element.
+
+This allows the `RefForwardingExample` to obtain a direct ref to the `<input>` inside `FocusableInputBox` and call `focus()` on it, demonstrating how `RenderHooks` seamlessly integrates into React's ref forwarding pattern. This avoids the need for extra wrapper elements or prop drilling just to pass a ref to an element rendered by `RenderHooks`.
 
 ---
 
