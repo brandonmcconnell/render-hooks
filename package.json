@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.6",
+    "@codesandbox/storybook-addon": "^0.2.2",
     "@storybook/addon-essentials": "^8.6.13",
     "@storybook/addon-onboarding": "^8.6.13",
     "@storybook/blocks": "^8.6.13",
