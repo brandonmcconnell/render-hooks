@@ -92,6 +92,7 @@ function NestedExample() {
     </ul>
   );
 }
+NestedExample.storyName = 'Nesting RenderHooks';
 // End of copied code
 
 const meta: Meta<typeof NestedExample> = {
@@ -104,8 +105,3 @@ const meta: Meta<typeof NestedExample> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-    name: 'Nested State Management'
-}; 
