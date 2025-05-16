@@ -9,7 +9,8 @@ const preview: Preview = {
        * This sandbox is created inside the given workspace
        * and can be shared with team members.
        */
-      apiToken: process.env.STORYBOOK_CODESANDBOX_TOKEN,
+      // @ts-expect-error (2339) Property 'env' does not exist on type 'ImportMeta'.
+      apiToken: import.meta.env.STORYBOOK_CODESANDBOX_TOKEN,
  
       /**
        * @required
