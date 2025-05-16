@@ -9,7 +9,12 @@ function UseStateExample() {
     <$>
       {({ useState }) => {
         const [value, set] = useState('');
-        return <input aria-label="useState-input" value={value} onChange={(e) => set(e.target.value)} placeholder="useState: type here..." />;
+        return (
+          <>
+            <input aria-label="useState-input" value={value} onChange={(e) => set(e.target.value)} placeholder="useState: type here..." />
+            <p>Value: "{value}"</p>
+          </>
+        );
       }}
     </$>
   );
@@ -44,7 +49,12 @@ function UseCallbackExample() {
         const [txt, setTxt] = useState('');
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setTxt(e.target.value), []);
-        return <input aria-label="useCallback-input" value={txt} onChange={handleChange} placeholder="useCallback: type here..." />;
+        return (
+          <>
+            <input aria-label="useCallback-input" value={txt} onChange={handleChange} placeholder="useCallback: type here..." />
+            <p>Value: "{txt}"</p>
+          </>
+        );
       }}
     </$>
   );

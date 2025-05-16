@@ -20,12 +20,6 @@ type ExtractHooks<T> = {
 /* ----------------------------------------------------------- *
  * 2 ▸ runtime collector that preserves static types            *
  * ----------------------------------------------------------- */
-function wrap<F extends Fn>(fn: F): F {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore  – keeps F's exact signature
-  return ((...args: Parameters<F>): ReturnType<F> => fn(...args)) as F;
-}
-
 function collectHooks<T>(src: T): ExtractHooks<T> {
   const out = {} as ExtractHooks<T>;
 
@@ -33,7 +27,7 @@ function collectHooks<T>(src: T): ExtractHooks<T> {
     if (key.startsWith('use')) {
       const fn = (src as Record<string, unknown>)[key];
       if (typeof fn === 'function') {
-        (out as Record<string, Fn>)[key] = wrap(fn as Fn);
+        (out as Record<string, Fn>)[key] = fn as Fn;
       }
     }
   }
