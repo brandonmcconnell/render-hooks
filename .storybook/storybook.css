@@ -8,8 +8,8 @@ body {
 }
 
 .sidebar-header a[title] img {
-  width: 64px;
-  height: auto;
+  height: 47px;
+  width: auto;
 }
 
 [data-story-block] > [data-name] {

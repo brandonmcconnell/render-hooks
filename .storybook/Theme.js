@@ -4,6 +4,6 @@ export default create({
   base: 'dark',
   brandTitle: 'RenderHooks',
   brandUrl: 'https://github.com/brandonmcconnell/render-hooks',
-  brandImage: 'https://github.com/brandonmcconnell/render-hooks/blob/main/.github/render-hooks-logo.png?raw=true',
+  brandImage: 'https://github.com/brandonmcconnell/render-hooks/blob/main/.github/render-hooks-logo_full.png?raw=true',
   // brandTarget: '_self',
 });
