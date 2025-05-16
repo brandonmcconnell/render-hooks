@@ -4,7 +4,7 @@ import $ from '../index'; // Adjust path as necessary
 import { useFormStatus as reactDom_useFormStatus } from 'react-dom'; // For useFormStatus example
 
 // --- useState --- 
-function UseStateExample() {
+export function Example_useState() {
   return (
     <$>
       {({ useState }) => {
@@ -19,9 +19,10 @@ function UseStateExample() {
     </$>
   );
 }
+Example_useState.storyName = 'useState';
 
 // --- useReducer --- 
-function UseReducerExample() {
+export function Example_useReducer() {
   return (
     <$>
       {({ useReducer }) => {
@@ -40,9 +41,10 @@ function UseReducerExample() {
     </$>
   );
 }
+Example_useReducer.storyName = 'useReducer';
 
 // --- useCallback --- 
-function UseCallbackExample() {
+export function Example_useCallback() {
   return (
     <$>
       {({ useState, useCallback }) => {
@@ -59,10 +61,11 @@ function UseCallbackExample() {
     </$>
   );
 }
+Example_useCallback.storyName = 'useCallback';
 
 // --- useContext --- 
 const ThemeCtx = React.createContext<'light' | 'dark'>('light');
-function UseContextExample() {
+export function Example_useContext() {
   return (
     <ThemeCtx.Provider value="dark">
       <$>
@@ -71,9 +74,10 @@ function UseContextExample() {
     </ThemeCtx.Provider>
   );
 }
+Example_useContext.storyName = 'useContext';
 
 // --- useMemo --- 
-function UseMemoExample() {
+export function Example_useMemo() {
   return (
     <$>
       {({ useState, useMemo }) => {
@@ -98,9 +102,10 @@ function UseMemoExample() {
     </$>
   );
 }
+Example_useMemo.storyName = 'useMemo';
 
 // --- useEffect --- 
-function UseEffectExample() {
+export function Example_useEffect() {
   return (
     <$>
       {({ useState, useEffect }) => {
@@ -114,9 +119,10 @@ function UseEffectExample() {
     </$>
   );
 }
+Example_useEffect.storyName = 'useEffect';
 
 // --- useLayoutEffect --- 
-function UseLayoutEffectExample() {
+export function Example_useLayoutEffect() {
   return (
     <$>
       {({ useRef, useLayoutEffect }) => {
@@ -129,6 +135,7 @@ function UseLayoutEffectExample() {
     </$>
   );
 }
+Example_useLayoutEffect.storyName = 'useLayoutEffect';
 
 // --- useImperativeHandle --- 
 const FancyInput = React.forwardRef<HTMLInputElement>((_, ref) => (
@@ -141,7 +148,7 @@ const FancyInput = React.forwardRef<HTMLInputElement>((_, ref) => (
   </$>
 ));
 FancyInput.displayName = 'FancyInput';
-function UseImperativeHandleExample() {
+export function Example_useImperativeHandle() {
   const fancyRef = React.useRef<HTMLInputElement>(null);
   return (
     <div>
@@ -150,9 +157,10 @@ function UseImperativeHandleExample() {
     </div>
   );
 }
+Example_useImperativeHandle.storyName = 'useImperativeHandle';
 
 // --- useRef --- 
-function UseRefExample() {
+export function Example_useRef() {
   return (
     <$>
       {({ useRef }) => {
@@ -167,9 +175,10 @@ function UseRefExample() {
     </$>
   );
 }
+Example_useRef.storyName = 'useRef';
 
 // --- useInsertionEffect --- 
-function UseInsertionEffectExample() {
+export function Example_useInsertionEffect() {
   const [show, setShow] = React.useState(true);
   const id = 'insertion-effect-style';
   return (
@@ -194,9 +203,10 @@ function UseInsertionEffectExample() {
     </div>
   );
 }
+Example_useInsertionEffect.storyName = 'useInsertionEffect';
 
 // --- useId --- 
-function UseIdExample() {
+export function Example_useId() {
   return (
     <$>
       {({ useId, useState }) => {
@@ -212,9 +222,10 @@ function UseIdExample() {
     </$>
   );
 }
+Example_useId.storyName = 'useId';
 
 // --- useSyncExternalStore --- 
-function UseSyncExternalStoreExample() {
+export function Example_useSyncExternalStore() {
   return (
     <$>
       {({ useSyncExternalStore }) => {
@@ -231,9 +242,10 @@ function UseSyncExternalStoreExample() {
     </$>
   );
 }
+Example_useSyncExternalStore.storyName = 'useSyncExternalStore';
 
 // --- useDeferredValue --- 
-function UseDeferredValueExample() {
+export function Example_useDeferredValue() {
   return (
     <$>
       {({ useState, useDeferredValue }) => {
@@ -249,32 +261,68 @@ function UseDeferredValueExample() {
     </$>
   );
 }
+Example_useDeferredValue.storyName = 'useDeferredValue';
 
 // --- useTransition --- 
-function UseTransitionExample() {
+export function Example_useTransition() {
   return (
     <$>
-      {({ useState, useTransition }) => {
-        const [list, setList] = useState<string[]>([]);
+      {({ useState, useTransition, useMemo }) => {
+        // Create a fixed list of sample products once (more practical than generic numbers)
+        const items = useMemo(
+          () => [
+            'Alligator',
+            'Bear',
+            'Cat',
+            'Dog',
+            'Elephant',
+            'Fox',
+            'Giraffe',
+            'Horse',
+            'Iguana',
+            'Jaguar',
+            'Kangaroo',
+            'Lion',
+            'Monkey',
+            'Newt',
+            'Owl',
+            'Penguin',
+            'Quail',
+            'Rabbit',
+            'Shark',
+            'Tiger',
+          ],
+          [],
+        );
+        const [list, setList] = useState<string[]>(items);
         const [pending, start] = useTransition();
+
         const filter = (e: React.ChangeEvent<HTMLInputElement>) => {
-          const q = e.target.value;
-          start(() => setList(Array.from({ length: 1000 }, (_, i) => `Item ${i}`).filter((x) => x.includes(q)))); // Reduced length for story
+          const q = e.target.value.toLowerCase();
+          start(() => setList(items.filter((x) => x.toLowerCase().includes(q))));
         };
         return (
           <div>
-            <input onChange={filter} placeholder="useTransition: filter 1k items" />
+            {/* Show the full list so users know what can be searched */}
+            <p style={{ maxWidth: '600px' }}>
+              All items:&nbsp;
+              <span style={{ fontStyle: 'italic' }}>{items.join(', ')}</span>
+            </p>
+            <input aria-label="useTransition-filter" onChange={filter} placeholder="Filter products..." />
             {pending && <p>Updating...</p>}
-            <p>{list.length} items found.</p>
+            <p>{list.length} item{list.length === 1 ? '' : 's'} found. {list.length === items.length ? '(no items filtered)' : ''}</p>
+            {/* Show the filtered items */}
+            {list.length > 0 && <p style={{ maxWidth: '600px' }}>{list.join(', ')}</p>}
           </div>
         );
       }}
     </$>
   );
 }
+Example_useTransition.storyName = 'useTransition';
 
 // --- useActionState --- 
-function UseActionStateExample() {
+export function Example_useActionState() {
   if (!React.useActionState) {
     return <p>React.useActionState is not available in this version of React.</p>;
   }
@@ -299,7 +347,7 @@ function UseActionStateExample() {
     </$>
   );
 }
-
+Example_useActionState.storyName = 'useActionState';
 
 // --- useFormStatus --- 
 // Note: react-dom useFormStatus is used here as react's might not be available/same
@@ -315,7 +363,7 @@ const FormStatusButton = () => {
     </$>
   );
 };
-function UseFormStatusExample() {
+export function Example_useFormStatus() {
   if (!reactDom_useFormStatus) { // Check if the imported one exists
     return <p>ReactDOM.useFormStatus is not available in this version of React DOM.</p>;
   }
@@ -338,6 +386,7 @@ function UseFormStatusExample() {
     </$>
   );
 }
+Example_useFormStatus.storyName = 'useFormStatus';
 
 // --- use (awaitable hook) --- 
 // Helper function for the 'use' example
@@ -349,7 +398,7 @@ const fetchQuote = () => {
   return quotePromise;
 };
 
-function UseAwaitExample() {
+export function Example_use() {
   if (!React.use) {
     return <p>React.use is not available in this version of React.</p>;
   }
@@ -367,8 +416,9 @@ function UseAwaitExample() {
     </React.Suspense>
   );
 }
+Example_use.storyName = 'use';
 
-
+// --- meta --- 
 const meta: Meta = {
   title: 'Examples/Built-in Hooks',
   tags: ['autodocs'],
@@ -384,21 +434,3 @@ const meta: Meta = {
   ],
 };
 export default meta;
-
-export const State: StoryObj = { name: 'useState', render: () => <UseStateExample /> };
-export const Reducer: StoryObj = { name: 'useReducer', render: () => <UseReducerExample /> };
-export const Callback: StoryObj = { name: 'useCallback', render: () => <UseCallbackExample /> };
-export const Context: StoryObj = { name: 'useContext', render: () => <UseContextExample /> };
-export const Memo: StoryObj = { name: 'useMemo', render: () => <UseMemoExample /> };
-export const Effect: StoryObj = { name: 'useEffect', render: () => <UseEffectExample /> };
-export const LayoutEffect: StoryObj = { name: 'useLayoutEffect', render: () => <UseLayoutEffectExample /> };
-export const ImperativeHandle: StoryObj = { name: 'useImperativeHandle', render: () => <UseImperativeHandleExample /> };
-export const Ref: StoryObj = { name: 'useRef', render: () => <UseRefExample /> };
-export const InsertionEffect: StoryObj = { name: 'useInsertionEffect', render: () => <UseInsertionEffectExample /> };
-export const Id: StoryObj = { name: 'useId', render: () => <UseIdExample /> };
-export const SyncExternalStore: StoryObj = { name: 'useSyncExternalStore', render: () => <UseSyncExternalStoreExample /> };
-export const DeferredValue: StoryObj = { name: 'useDeferredValue', render: () => <UseDeferredValueExample /> };
-export const Transition: StoryObj = { name: 'useTransition', render: () => <UseTransitionExample /> };
-export const ActionState: StoryObj = { name: 'useActionState', render: () => <UseActionStateExample /> };
-export const FormStatus: StoryObj = { name: 'useFormStatus', render: () => <UseFormStatusExample /> };
-export const AwaitUse: StoryObj = { name: 'use (awaitable)', render: () => <UseAwaitExample /> }; 

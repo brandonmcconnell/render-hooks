@@ -3,7 +3,7 @@ import React from 'react'; // React is implicitly used by JSX and useState
 import $ from '../index';
 
 // Copied from README.md Quick Start
-function Counter() {
+export function Counter() {
   return (
     <$>
       {({ useState }) => {
@@ -24,6 +24,6 @@ const meta: Meta<typeof Counter> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+// type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {}; 
+// export const Default: Story = {}; 
