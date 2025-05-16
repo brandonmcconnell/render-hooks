@@ -1,9 +1,14 @@
 import type { Preview } from '@storybook/react'
 import theme from './Theme'
+import './storybook.css';
+
 const preview: Preview = {
   parameters: {
     docs: {
-      theme,
+      theme: {
+        ...theme,
+        base: 'light',
+      },
     },
     codesandbox: {
       /**
